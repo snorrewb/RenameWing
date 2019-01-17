@@ -1,0 +1,136 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+
+<mdscript name="RenameWing" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="md.xsd">
+	<!-- RenameWing 0.5 renames wings of ships at once via the comm wheel. Features of 0.5:
+		- Rename all ships in wing to name of wing leader, append ships class, size and a numbering. Implemented, needs work.
+		- Rename all ships in wing to prefix + original ship name. Not implemented.
+		- Rename all ships in wing to include prefix before ship name. Implemented, needs work.
+		- Adds "Comm" option to station context menu, so you can call the manager directly.	(not implemented)
+		-->
+	<!-- Debug -->
+	<!-- <set_value name="$name" exact="'RenameWing' + player.age" /> -->
+	<!-- Debug  output-->
+	<!-- <debug_text text="$name + ': RenameWing running.'"/> -->
+	
+	<cues>
+		<!-- The RenameWing option is put in the conversation wheel.
+			TODO: Check to see if we can avoid replacing existing chat options.
+		-->
+		<cue name="RenameWingInit" instantiate="true" namespace="this">
+			<conditions>
+				<event_cue_signalled />
+			</conditions>
+			<actions>
+				<add_player_choice text="{1043,101}" section="RenameWMenu"/>
+			</actions>
+		</cue>
+		
+		<!-- The RenameWing menu.
+			-->
+		<cue name="RenameWingMenu" instantiate="true" namespace="this">
+			<conditions>
+				<check_any>
+					<event_conversation_next_section section="RenameWMenu" />
+					<event_conversation_returned_to_section section="RenameWMenu" />
+				</check_any>
+			</conditions>
+			<actions>
+				<add_player_choice_sub text="{1043,102}" section="RenameWDo" />
+				<add_player_choice_sub text="{1043,103}" section="RenameWUndo" />
+				<add_player_choice_sub text="{1043,104}" section="RenameWPrefix" />
+				<add_player_choice_return text="{1043,105}"/>
+			</actions>
+		</cue>
+		
+		<!-- Rename all ships to name of wing leader, append ships class, size and a numbering.
+			TODO: Change so numbering is more useful (currently just numbers all from same list, not helpful).
+			-->
+		<cue name="RenameWingDo" instantiate="true" namespace="this">
+			<conditions>
+				<check_all>
+					<event_conversation_next_section section="RenameWDo" />
+				</check_all>
+			</conditions>
+			<actions>
+				<speak actor="player.computer" line="705" comment="'Installing updates.'" />
+				<set_value name="$subordinatesCount" exact="event.object.container.subordinates.count"/>
+				<do_all exact="$subordinatesCount" counter="$i">
+					<do_if value="'%1'.[event.object.container.subordinates.{$i}.class]" exact="'ship_s'">
+						<set_value name="$shipClassName" exact="{1043,107}"/>
+					</do_if>
+					<do_if value="'%1'.[event.object.container.subordinates.{$i}.class]" exact="'ship_m'">
+						<set_value name="$shipClassName" exact="{1043,108}"/>
+					</do_if>
+					<do_if value="'%1'.[event.object.container.subordinates.{$i}.class]" exact="'ship_l'">
+						<set_value name="$shipClassName" exact="{1043,109}"/>
+					</do_if>
+					<do_if value="'%1'.[event.object.container.subordinates.{$i}.class]" exact="'ship_xl'">
+						<set_value name="$shipClassName" exact="{1043,110}"/>
+					</do_if>
+					
+					<do_if value="$i" max="9">
+						<set_object_name object="event.object.container.subordinates.{$i}" name="'%1 [%2 %3] 00%4'.[event.object.container.name, event.object.container.subordinates.{$i}.typename, $shipClassName, $i]"/>
+					</do_if>
+					<do_elseif value="$i" min="9" max="99">
+						<set_object_name object="event.object.container.subordinates.{$i}" name="'%1 [%2 %3] 0%4'.[event.object.container.name, event.object.container.subordinates.{$i}.typename, $shipClassName, $i]"/>
+					</do_elseif>
+					<do_else>
+						<set_object_name object="event.object.container.subordinates.{$i}" name="'%1 [%2 %3] %4'.[event.object.container.name, event.object.container.subordinates.{$i}.typename, $shipClassName, $i]"/>
+					</do_else>
+				</do_all>
+				<add_player_choice text="{1043,106}" section="g_goodbye" />
+			</actions>
+		</cue>
+		
+		<!-- Rename all ships to prefix + original name. (WIP)
+			TODO: Not ready.
+			-->
+		<cue name="RenameWingUndo" instantiate="true" namespace="this">
+			<conditions>
+				<check_all>
+					<event_conversation_next_section section="RenameWUndo" />
+				</check_all>
+			</conditions>
+			<actions>
+				<speak actor="player.computer" line="705" comment="'Installing updates.'" />
+				<!-- SETUP Change settings here to customize RenameWing. -->
+				<set_value name="$prefix" exact="'WHG'" /> <!-- Set the prefix you wish to use for your ships here. -->
+				<!-- SETUP END -->
+				<set_value name="$subordinatesCount" exact="event.object.container.subordinates.count" />
+				<!-- <set_object_name object="event.object.container" name="'%1 %2'.[$prefix, event.object.container.name]"/> -->
+				<do_all exact="$subordinatesCount" counter="$i">
+					<debug_text text="$name + ': RenameWingUndo do_all ' + $i"/>
+					<!-- <set_object_name object="event.object.container.subordinates.{$i}" name="'%1 %2'.[$prefix, event.object.container.subordinates.{$i}.name]"/> -->
+				</do_all>
+				<add_player_choice text="{1043,106}" section="g_goodbye" />
+			</actions>
+		</cue>
+		
+		<!-- Adds prefix to all ships in wing.
+			TODO: Don't add a prefix if it has already been added.
+			-->
+		<cue name="RenameWingPrefix" instantiate="true" namespace="this">
+			<conditions>
+				<check_all>
+					<event_conversation_next_section section="RenameWPrefix" />
+				</check_all>
+			</conditions>
+			<actions>
+				<speak actor="player.computer" line="705" comment="'Installing updates.'" />
+				<!-- SETUP Change settings here to customize RenameWing. -->
+				<set_value name="$prefix" exact="'WHG'" /> <!-- Set the prefix you wish to use for your ships here. -->
+				<!-- SETUP END -->
+				<set_value name="$subordinatesCount" exact="event.object.container.subordinates.count" />
+				<debug_to_file chance="$debugchance" name="'SatTest'" output="true" append="true" text="'Adding prefix %1 to %2 ships'.[$prefix, $subordinatesCount]"/>
+				<do_all exact="$subordinatesCount" counter="$i">
+					<debug_text text="$name + ': RenameWingPrefix do_all ' + $i"/>
+					<set_object_name object="event.object.container.subordinates.{$i}" name="'%1 %2'.[$prefix, event.object.container.subordinates.{$i}.name]"/>
+				</do_all>
+				<set_object_name object="event.object.container" name="'%1 %2'.[$prefix, event.object.container.name]"/>
+				<set_value name="$subordinatesCount" exact="$subordinatesCount + 1" />
+				
+				<add_player_choice text="{1043,106}" section="g_goodbye" />
+			</actions>
+		</cue>
+	</cues>
+</mdscript>

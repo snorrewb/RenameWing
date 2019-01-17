@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<content id="RenameWing" name="RenameWing" description="Rename an entire wing based on the lead ship" author="snorrewb" version="050" date="2019-04-01" save="0" enabled="1">
+  <text language="7"  name="RenameWing" description="Rename an entire wing based on the lead ship" author="snorrewb" />
+  <text language="33" name="RenameWing" description="Rename an entire wing based on the lead ship" author="snorrewb" />
+  <text language="34" name="RenameWing" description="Rename an entire wing based on the lead ship" author="snorrewb" />
+  <text language="39" name="RenameWing" description="Rename an entire wing based on the lead ship" author="snorrewb" />
+  <text language="44" name="RenameWing" description="Rename an entire wing based on the lead ship" author="snorrewb" />
+  <text language="49" name="RenameWing" description="Rename an entire wing based on the lead ship" author="snorrewb" />
+  <text language="55" name="RenameWing" description="Rename an entire wing based on the lead ship" author="snorrewb" />
+  <text language="81" name="RenameWing" description="Rename an entire wing based on the lead ship" author="snorrewb" />
+  <text language="82" name="RenameWing" description="Rename an entire wing based on the lead ship" author="snorrewb" />
+  <text language="86" name="RenameWing" description="Rename an entire wing based on the lead ship" author="snorrewb" />
+  <text language="88" name="RenameWing" description="Rename an entire wing based on the lead ship" author="snorrewb" />
+</content>

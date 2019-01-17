@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+
+<mdscript name="RenameWingTrigger" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="md.xsd">
+	<!-- Debug -->
+	<!-- <set_value name="$name" exact="'RenameWingTrigger' + player.age" /> -->
+	<!-- Debug  output-->
+	<!-- <debug_text text="$name + ': RenameWingTrigger running.'"/> -->
+	
+	<cues>
+		<!-- Checks whether a started conversation matches RenameWing conditions, and launches it.
+		-->
+		<cue name="RenameWingTriggerCue" instantiate="true" namespace="this">
+			<conditions>
+				<event_conversation_started conversation="default" />
+				<check_all>
+					<check_value value="event.object.isplayerowned" />
+					<check_value value="event.object.container.subordinates.count" />
+					<check_any>
+						<check_value value="event.object.controlpost == controlpost.aipilot" />
+						<check_value value="event.object.controlpost == controlpost.manager" />
+					</check_any>
+				</check_all>
+			</conditions>
+			<actions>
+				<do_if value="event.object">
+					<signal_cue_instantly cue="md.RenameWing.RenameWingInit" param="event.object" />
+				</do_if>
+				<do_else>
+					<cancel_cue cue="RenameWingTriggerCue" />
+				</do_else>
+			</actions>
+		</cue>
+	</cues>
+</mdscript>
